@@ -1,0 +1,12 @@
+{
+    "name": "jeremytubbs/deepzoom",
+    "autoload": {
+        "psr-4": {
+            "Jeremytubbs\\Deepzoom\\": "src/"
+        }
+    },
+    "require": {
+        "intervention/image": "^2.3",
+        "league/flysystem": "^1.0"
+    }
+}
