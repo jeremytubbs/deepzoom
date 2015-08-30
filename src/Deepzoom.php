@@ -15,6 +15,7 @@ class Deepzoom
 
     public function __construct()
     {
+        set_time_limit ( 120 );
         Image::configure(array('driver' => 'GD'));
         $this->tileSize = 256;
         $this->tileOverlap = 1;
@@ -33,6 +34,8 @@ class Deepzoom
         // get image width and height
         $height = $img->height();
         $width = $img->width();
+        unset($img);
+
         $maxDimension = max([$width, $height]);
 
         // calculate the number of levels
@@ -50,9 +53,8 @@ class Deepzoom
             $scale = $this->getScaleForLevel($numLevels, $level);
             // calculate dimensions for levels
             $dimension = $this->getDimensionForLevel($width, $height, $scale);
-            $img = Image::make($image)->resize($dimension['width'], $dimension['height']);
-            $img->save(__DIR__."/../../../public/images/$level_folder/$filename");
-            //$this->createLevelTiles($dimension['width'], $dimension['height'], $level, $level_folder);
+
+            $this->createLevelTiles($dimension['width'], $dimension['height'], $level, $level_folder, $image);
         }
 
         return $folder;
@@ -83,36 +85,43 @@ class Deepzoom
         return ['width' => $width, 'height' => $height];
     }
 
-    public function createLevelTiles($width, $height, $level, $folder)
+    public function createLevelTiles($width, $height, $level, $folder, $image)
     {
+        // create new image at scaled dimensions
+        $img = Image::make($image)->resize($width, $height);
         // get column and row count for level
         $tiles = $this->getNumTiles($width, $height);
         foreach (range(0, $tiles['columns'] - 1) as $column) {
             foreach (range(0, $tiles['rows'] - 1) as $row) {
-                $tile_file = "$folder/$column_$row.$this->tileFormat";
+                $tileImg = clone $img;
+                $tile_file = $column.'_'.$row.'.'.$this->tileFormat;
+                $bounds = $this->getTileBounds($level,$column,$row,$width,$height);
+                $tileImg->crop($bounds['width'],$bounds['height'],$bounds['x'],$bounds['y']);
+                $tileImg->save(__DIR__."/../../../public/images/$folder/$tile_file");
+                unset($tileImg);
             }
         }
+        unset($img);
     }
 
-    // public function getTileBoundsPosition($column, $row) {
-    //     $offsetX = $column == 0 ? 0 : $this->_tileOverlap;
-    //     $offsetY = $row == 0 ? 0 : $this->_tileOverlap;
-    //     $x = ($column * $this->_tileSize) - $offsetX;
-    //     $y = ($row * $this->_tileSize) - $offsetY;
+    public function getTileBoundsPosition($column, $row) {
+        $offsetX = $column == 0 ? 0 : $this->tileOverlap;
+        $offsetY = $row == 0 ? 0 : $this->tileOverlap;
+        $x = ($column * $this->tileSize) - $offsetX;
+        $y = ($row * $this->tileSize) - $offsetY;
 
-    //     return ['x' => $x, 'y' => $y];
-    // }
+        return ['x' => $x, 'y' => $y];
+    }
 
-    // public function getTileBounds($level, $column, $row) {
-    //     $position = $this->getTileBoundsPosition($column, $row);
+    public function getTileBounds($level, $column, $row, $w, $h) {
+        $position = $this->getTileBoundsPosition($column, $row);
 
-    //     $dimension = $this->getDimension($level);
-    //     $width = $this->_tileSize + ($column == 0 ? 1 : 2) * $this->_tileOverlap;
-    //     $height = $this->_tileSize + ($row == 0 ? 1 : 2) * $this->_tileOverlap;
-    //     $newWidth = min($width, $dimension['width'] - $position['x']);
-    //     $newHeight = min($height, $dimension['height'] - $position['y']);
+        $width = $this->tileSize + ($column == 0 ? 1 : 2) * $this->tileOverlap;
+        $height = $this->tileSize + ($row == 0 ? 1 : 2) * $this->tileOverlap;
+        $newWidth = min($width, $w - $position['x']);
+        $newHeight = min($height, $h - $position['y']);
 
-    //     return array_merge($position,array( 'width' => $newWidth,'height' => $newHeight));
-    // }
+        return array_merge($position,['width' => $newWidth,'height' => $newHeight]);
+    }
 
 }
