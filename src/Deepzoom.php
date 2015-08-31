@@ -40,8 +40,8 @@ class Deepzoom
         $numLevels = $this->getNumLevels($maxDimension);
 
         // folder name = level
-        $filename = pathinfo($image)['basename'];
-        $folder = pathinfo($image)['filename'].'_files';
+        $filename = pathinfo($image)['filename'];
+        $folder = $filename.'/'.$filename.'_files';
         $this->filesystem->createDir($folder);
 
         foreach(range(0,$numLevels - 1) as $level) {
@@ -51,11 +51,13 @@ class Deepzoom
             $scale = $this->getScaleForLevel($numLevels, $level);
             // calculate dimensions for levels
             $dimension = $this->getDimensionForLevel($width, $height, $scale);
-
+            // create tiles for level
             $this->createLevelTiles($dimension['width'], $dimension['height'], $level, $level_folder, $image);
         }
 
-        return $folder;
+        $DZI = $this->createDZI($this->tileFormat, $this->tileOverlap, $this->tileSize, $height, $width);
+        $this->filesystem->write($filename.'/'.$filename.'.dzi', $DZI);
+        return 'complete';
     }
 
     public function getNumLevels($maxDimension)
@@ -124,10 +126,17 @@ class Deepzoom
         return array_merge($position,['width' => $newWidth,'height' => $newHeight]);
     }
 
-    public function createDZI()
+    public function createDZI($tileFormat, $tileOverlap, $tileSize, $height, $width)
     {
-        //
+        return <<<EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<Image xmlns="http://schemas.microsoft.com/deepzoom/2008"
+       Format="$tileFormat"
+       Overlap="$tileOverlap"
+       TileSize="$tileSize" >
+    <Size Height="$height"
+          Width="$width" />
+</Image>
+EOF;
     }
-
-
 }
