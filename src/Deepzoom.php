@@ -15,8 +15,7 @@ class Deepzoom
 
     public function __construct()
     {
-        set_time_limit ( 120 );
-        Image::configure(array('driver' => 'GD'));
+        Image::configure(array('driver' => 'imagick'));
         $this->tileSize = 256;
         $this->tileOverlap = 1;
         $this->tileFormat = 'jpg';
@@ -25,10 +24,9 @@ class Deepzoom
         $this->filesystem = new Filesystem($this->adapter);
     }
 
-    public function test()
+    public function create($image)
     {
         // path to a test image
-        $image = public_path('images/TBA-Studio.jpg');
         $img = Image::make($image);
 
         // get image width and height
@@ -104,7 +102,8 @@ class Deepzoom
         unset($img);
     }
 
-    public function getTileBoundsPosition($column, $row) {
+    public function getTileBoundsPosition($column, $row)
+    {
         $offsetX = $column == 0 ? 0 : $this->tileOverlap;
         $offsetY = $row == 0 ? 0 : $this->tileOverlap;
         $x = ($column * $this->tileSize) - $offsetX;
@@ -113,7 +112,8 @@ class Deepzoom
         return ['x' => $x, 'y' => $y];
     }
 
-    public function getTileBounds($level, $column, $row, $w, $h) {
+    public function getTileBounds($level, $column, $row, $w, $h)
+    {
         $position = $this->getTileBoundsPosition($column, $row);
 
         $width = $this->tileSize + ($column == 0 ? 1 : 2) * $this->tileOverlap;
@@ -123,5 +123,11 @@ class Deepzoom
 
         return array_merge($position,['width' => $newWidth,'height' => $newHeight]);
     }
+
+    public function createDZI()
+    {
+        //
+    }
+
 
 }
