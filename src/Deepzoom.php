@@ -2,32 +2,32 @@
 
 namespace Jeremytubbs\Deepzoom;
 
-use Intervention\Image\ImageManagerStatic as Image;
-use League\Flysystem\Filesystem;
-use League\Flysystem\Adapter\Local;
+use Intervention\Image\ImageManager;
+use League\Flysystem\FilesystemInterface;
 
 class Deepzoom
 {
+    protected $cache;
+    protected $source;
+    protected $imageManager;
 
     private $tileSize;
     private $tileOverlap;
     private $tileFormat;
 
-    public function __construct()
+    public function __construct(FilesystemInterface $path, ImageManager $imageManager)
     {
-        Image::configure(array('driver' => 'imagick'));
+        $this->setImageManager($imageManager);
+        $this->setPath($path);
         $this->tileSize = 256;
         $this->tileOverlap = 1;
         $this->tileFormat = 'jpg';
-
-        $this->adapter = new Local(__DIR__.'/../../../public/images');
-        $this->filesystem = new Filesystem($this->adapter);
     }
 
-    public function create($image)
+    public function makeTiles($image)
     {
         // path to a test image
-        $img = Image::make($image);
+        $img = $this->imageManager->make($image);
 
         // get image width and height
         $height = $img->height();
@@ -42,11 +42,11 @@ class Deepzoom
         // folder name = level
         $filename = pathinfo($image)['filename'];
         $folder = $filename.'/'.$filename.'_files';
-        $this->filesystem->createDir($folder);
+        $this->path->createDir($folder);
 
         foreach(range(0,$numLevels - 1) as $level) {
             $level_folder = $folder.'/'.$level;
-            $this->filesystem->createDir($level_folder);
+            $this->path->createDir($level_folder);
             // calculate scale for level
             $scale = $this->getScaleForLevel($numLevels, $level);
             // calculate dimensions for levels
@@ -56,7 +56,7 @@ class Deepzoom
         }
 
         $DZI = $this->createDZI($this->tileFormat, $this->tileOverlap, $this->tileSize, $height, $width);
-        $this->filesystem->write($filename.'/'.$filename.'.dzi', $DZI);
+        $this->path->write($filename.'/'.$filename.'.dzi', $DZI);
         return 'complete';
     }
 
@@ -88,7 +88,7 @@ class Deepzoom
     public function createLevelTiles($width, $height, $level, $folder, $image)
     {
         // create new image at scaled dimensions
-        $img = Image::make($image)->resize($width, $height);
+        $img = $this->imageManager->make($image)->resize($width, $height);
         // get column and row count for level
         $tiles = $this->getNumTiles($width, $height);
         foreach (range(0, $tiles['columns'] - 1) as $column) {
@@ -138,5 +138,25 @@ class Deepzoom
           Width="$width" />
 </Image>
 EOF;
+    }
+
+    public function setImageManager(ImageManager $imageManager)
+    {
+        $this->imageManager = $imageManager;
+    }
+
+    public function getImageManager()
+    {
+        return $this->imageManager;
+    }
+
+    public function setPath(FilesystemInterface $path)
+    {
+        $this->path = $path;
+    }
+
+    public function getPath()
+    {
+        return $this->path;
     }
 }
