@@ -1,7 +1,7 @@
 {
     "name": "jeremytubbs/deepzoom",
     "description": "Deepzoom Tile Generator for OpenSeadragon",
-    "license": "GPL",
+    "license": "MIT",
     "authors" : [
         {
             "name": "Jeremy Tubbs",
@@ -13,12 +13,15 @@
         "openseadragon",
         "deepzoom",
         "dzi",
+        "zoom",
         "zoomable",
         "tiled",
+        "intervention",
         "image",
         "gd",
         "imagemagick",
-        "imagick"
+        "imagick",
+        "flysystem"
     ],
     "autoload": {
         "psr-4": {
@@ -26,7 +29,7 @@
         }
     },
     "require": {
-        "php": ">=5.4",
+        "php": ">=5.4.0",
         "intervention/image": "^2.3",
         "league/flysystem": "^1.0"
     }
