@@ -24,7 +24,7 @@ class Deepzoom
         $this->tileFormat = 'jpg';
     }
 
-    public function makeTiles($image)
+    public function makeTiles($folder = NULL, $file = NULL, $image)
     {
         // path to a test image
         $img = $this->imageManager->make($image);
@@ -40,8 +40,9 @@ class Deepzoom
         $numLevels = $this->getNumLevels($maxDimension);
 
         // folder name = level
-        $filename = pathinfo($image)['filename'];
-        $folder = $filename.'/'.$filename.'_files';
+        $filename = $file ? $file : pathinfo($image)['filename'];
+        $foldername = $folder ? $folder : pathinfo($image)['filename'];
+        $folder = $foldername.'/'.$filename.'_files';
         $this->path->createDir($folder);
 
         foreach(range(0,$numLevels - 1) as $level) {
@@ -56,7 +57,7 @@ class Deepzoom
         }
 
         $DZI = $this->createDZI($this->tileFormat, $this->tileOverlap, $this->tileSize, $height, $width);
-        $this->path->write($filename.'/'.$filename.'.dzi', $DZI);
+        $this->path->write($foldername.'/'.$filename.'.dzi', $DZI);
         return 'complete';
     }
 
