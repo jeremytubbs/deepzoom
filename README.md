@@ -10,5 +10,7 @@ https://openseadragon.github.io/
       'path' => 'images', // Export path for tiles
       'driver' => 'imagick', // Image driver
   ]);
-  $deepzoom->makeTiles('KISS.jpg');
+  // folder, file are optional and will default to filename
+  $deepzoom->makeTiles('folder', 'file', 'KISS.jpg');
 ```
+
