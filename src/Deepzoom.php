@@ -97,7 +97,9 @@ class Deepzoom
                 $tile_file = $column.'_'.$row.'.'.$this->tileFormat;
                 $bounds = $this->getTileBounds($level,$column,$row,$width,$height);
                 $tileImg->crop($bounds['width'],$bounds['height'],$bounds['x'],$bounds['y']);
-                $tileImg->save(__DIR__."/../../../public/images/$folder/$tile_file");
+                $tileImg->encode($this->tileFormat);
+                $this->path->write("$folder/$tile_file", $tileImg);
+                //$tileImg->save(__DIR__."/../../../public/images/$folder/$tile_file");
                 unset($tileImg);
             }
         }
