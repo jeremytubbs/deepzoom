@@ -24,7 +24,7 @@ class Deepzoom
         $this->tileFormat = 'jpg';
     }
 
-    public function makeTiles($folder = NULL, $file = NULL, $image)
+    public function makeTiles($image, $file = NULL, $folder = NULL)
     {
         // path to a test image
         $img = $this->imageManager->make($image);
@@ -39,9 +39,11 @@ class Deepzoom
         // calculate the number of levels
         $numLevels = $this->getNumLevels($maxDimension);
 
-        // folder name = level
+        // set filename or use path filename
         $filename = $file ? $file : pathinfo($image)['filename'];
+        // set folder or use path filename
         $foldername = $folder ? $folder : pathinfo($image)['filename'];
+
         $folder = $foldername.'/'.$filename.'_files';
         $this->path->createDir($folder);
 
