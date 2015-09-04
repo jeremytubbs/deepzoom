@@ -70,7 +70,12 @@ class Deepzoom
 
         $JSONP = $this->createJSONP($filename, $height, $width);
         $this->path->write($foldername.'/'.$filename.'.js', $JSONP);
-        return 'complete';
+
+        return ['success' => [
+            'JSONP' => "$foldername/$filename.js",
+            'DZI' => "$foldername/$filename.js",
+            '_files' => "$foldername/$filename"."_files"
+        ]];
     }
 
     public function getNumLevels($maxDimension)
