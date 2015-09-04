@@ -80,7 +80,7 @@ class Deepzoom
             'status' => $status,
             'data' => [
                     'JSONP' => "$foldername/$filename.js",
-                    'DZI' => "$foldername/$filename.js",
+                    'DZI' => "$foldername/$filename.dzi",
                     '_files' => "$foldername/$filename"."_files"
                 ],
             'message' => $message
