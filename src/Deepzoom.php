@@ -26,9 +26,6 @@ class Deepzoom
 
     public function makeTiles($image, $file = NULL, $folder = NULL)
     {
-        $status = 'ok';
-        $message = 'Everything is okay!';
-
         // path to a test image
         $img = $this->imageManager->make($image);
 
@@ -44,17 +41,13 @@ class Deepzoom
 
         // set filename or use path filename
         $filename = $file !== NULL ? $file : pathinfo($image)['filename'];
-        // for JSONP filename cannot start with a number
-        $filenameFirstChar = substr($filename, 0, 1);
-        // if numeric add 'a' to begining of filename
-        if (is_numeric($filenameFirstChar)) {
-            $filename = 'a'.$filename;
-            $status = 'warning';
-            $message = "Numeric filenames not allowed file renamed: $filename";
-        }
 
         // set folder or use path filename
         $foldername = $folder !== NULL ? $folder : pathinfo($image)['filename'];
+
+        // check for spaces in names
+        $check = $this->checkFileFolderNames($filename, $folder);
+        if ($check != 'ok') return $check;
 
         $folder = $foldername.'/'.$filename.'_files';
         $this->path->createDir($folder);
@@ -77,13 +70,13 @@ class Deepzoom
         $this->path->put($foldername.'/'.$filename.'.js', $JSONP);
 
         return [
-            'status' => $status,
+            'status' => 'ok',
             'data' => [
                     'JSONP' => "$foldername/$filename.js",
                     'DZI' => "$foldername/$filename.dzi",
                     '_files' => "$foldername/$filename"."_files"
                 ],
-            'message' => $message
+            'message' => 'Everything is okay!'
         ];
     }
 
@@ -184,6 +177,34 @@ $filename({
     }
 });
 EOF;
+    }
+
+    public function checkFileFolderNames($file, $folder) {
+        // check for space
+        if (preg_match('/\s/',$file) || preg_match('/\s/',$folder)) {
+            return [
+                'status' => 'error',
+                'message' => 'Filename and folder name must not contain spaces.'
+            ];
+        }
+        // check for special characters
+        $specialCharRegex = '/[\'^£$%&*()}{@#~?><>,|=_+¬-]/';
+        if (preg_match($specialCharRegex, $file) || preg_match($specialCharRegex, $folder)) {
+            return [
+                'status' => 'error',
+                'message' => 'Filename and folder name must not contain special characters.'
+            ];
+        }
+        // for JSONP filename cannot start with a number
+        $fileFirstChar = substr($file, 0, 1);
+        // if numeric add 'a' to begining of filename
+        if (is_numeric($fileFirstChar)) {
+            return [
+                'status' => 'error',
+                'message' => 'Filenames must not start with a numeric value.'
+            ];
+        }
+        return 'ok';
     }
 
     public function setImageManager(ImageManager $imageManager)
