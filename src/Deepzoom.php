@@ -58,8 +58,11 @@ class Deepzoom
             $this->createLevelTiles($dimension['width'], $dimension['height'], $level, $level_folder, $image);
         }
 
-        $DZI = $this->createDZI($this->tileFormat, $this->tileOverlap, $this->tileSize, $height, $width);
+        $DZI = $this->createDZI($height, $width);
         $this->path->write($foldername.'/'.$filename.'.dzi', $DZI);
+
+        $JSONP = $this->createJSONP($filename, $height, $width);
+        $this->path->write($foldername.'/'.$filename.'.js', $JSONP);
         return 'complete';
     }
 
@@ -130,17 +133,35 @@ class Deepzoom
         return array_merge($position,['width' => $newWidth,'height' => $newHeight]);
     }
 
-    public function createDZI($tileFormat, $tileOverlap, $tileSize, $height, $width)
+    public function createDZI($height, $width)
     {
         return <<<EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <Image xmlns="http://schemas.microsoft.com/deepzoom/2008"
-       Format="$tileFormat"
-       Overlap="$tileOverlap"
-       TileSize="$tileSize" >
+       Format="$this->tileFormat"
+       Overlap="$this->tileOverlap"
+       TileSize="$this->tileSize" >
     <Size Height="$height"
           Width="$width" />
 </Image>
+EOF;
+    }
+
+    public function createJSONP($filename, $height, $width)
+    {
+        return <<<EOF
+$filename({
+    Image: {
+        xmlns:    'http://schemas.microsoft.com/deepzoom/2008',
+        Format:   '$this->tileFormat',
+        Overlap:  $this->tileOverlap,
+        TileSize: $$this->tileSize
+        Size: {
+            Width: 676,
+            Height:  571
+        }
+    }
+});
 EOF;
     }
 
