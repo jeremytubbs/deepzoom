@@ -40,9 +40,16 @@ class Deepzoom
         $numLevels = $this->getNumLevels($maxDimension);
 
         // set filename or use path filename
-        $filename = $file != NULL || is_int($file) ? $file : pathinfo($image)['filename'];
+        $filename = $file !== NULL ? $file : pathinfo($image)['filename'];
+        // for JSONP filename cannot start with a number
+        $filenameFirstChar = substr($filename, 0, 1);
+        // if numeric add 'a' to begining of filename
+        if (is_numeric($filenameFirstChar)) {
+            $filename = 'a'.$filename;
+        }
+
         // set folder or use path filename
-        $foldername = $folder != NULL || is_int($folder) ? $folder : pathinfo($image)['filename'];
+        $foldername = $folder !== NULL ? $folder : pathinfo($image)['filename'];
 
         $folder = $foldername.'/'.$filename.'_files';
         $this->path->createDir($folder);
