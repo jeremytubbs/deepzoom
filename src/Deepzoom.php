@@ -40,9 +40,9 @@ class Deepzoom
         $numLevels = $this->getNumLevels($maxDimension);
 
         // set filename or use path filename
-        $filename = $file ? $file : pathinfo($image)['filename'];
+        $filename = $file != NULL || is_int($file) ? $file : pathinfo($image)['filename'];
         // set folder or use path filename
-        $foldername = $folder ? $folder : pathinfo($image)['filename'];
+        $foldername = $folder != NULL || is_int($folder) ? $folder : pathinfo($image)['filename'];
 
         $folder = $foldername.'/'.$filename.'_files';
         $this->path->createDir($folder);
