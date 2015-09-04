@@ -26,6 +26,9 @@ class Deepzoom
 
     public function makeTiles($image, $file = NULL, $folder = NULL)
     {
+        $status = 'ok';
+        $message = 'Everything is okay!';
+
         // path to a test image
         $img = $this->imageManager->make($image);
 
@@ -46,6 +49,8 @@ class Deepzoom
         // if numeric add 'a' to begining of filename
         if (is_numeric($filenameFirstChar)) {
             $filename = 'a'.$filename;
+            $status = 'warning';
+            $message = "Numeric filenames not allowed file renamed: $filename";
         }
 
         // set folder or use path filename
@@ -66,16 +71,20 @@ class Deepzoom
         }
 
         $DZI = $this->createDZI($height, $width);
-        $this->path->write($foldername.'/'.$filename.'.dzi', $DZI);
+        $this->path->put($foldername.'/'.$filename.'.dzi', $DZI);
 
         $JSONP = $this->createJSONP($filename, $height, $width);
-        $this->path->write($foldername.'/'.$filename.'.js', $JSONP);
+        $this->path->put($foldername.'/'.$filename.'.js', $JSONP);
 
-        return ['success' => [
-            'JSONP' => "$foldername/$filename.js",
-            'DZI' => "$foldername/$filename.js",
-            '_files' => "$foldername/$filename"."_files"
-        ]];
+        return [
+            'status' => $status,
+            'data' => [
+                    'JSONP' => "$foldername/$filename.js",
+                    'DZI' => "$foldername/$filename.js",
+                    '_files' => "$foldername/$filename"."_files"
+                ],
+            'message' => $message
+        ];
     }
 
     public function getNumLevels($maxDimension)
@@ -116,7 +125,7 @@ class Deepzoom
                 $bounds = $this->getTileBounds($level,$column,$row,$width,$height);
                 $tileImg->crop($bounds['width'],$bounds['height'],$bounds['x'],$bounds['y']);
                 $tileImg->encode($this->tileFormat);
-                $this->path->write("$folder/$tile_file", $tileImg);
+                $this->path->put("$folder/$tile_file", $tileImg);
                 unset($tileImg);
             }
         }
