@@ -231,13 +231,13 @@ EOF;
         return <<<EOF
 $filename({
     Image: {
-        xmlns:    'http://schemas.microsoft.com/deepzoom/2008',
-        Format:   '$this->tileFormat',
-        Overlap:  $this->tileOverlap,
-        TileSize: $$this->tileSize
+        xmlns: 'http://schemas.microsoft.com/deepzoom/2008',
+        Format: '$this->tileFormat',
+        Overlap: $this->tileOverlap,
+        TileSize: $this->tileSize
         Size: {
-            Width: 676,
-            Height:  571
+            Width: $width,
+            Height: $height
         }
     }
 });
