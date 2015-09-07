@@ -46,7 +46,6 @@ class Deepzoom
         // get image width and height
         $height = $img->height();
         $width = $img->width();
-        unset($img);
 
         $maxDimension = max([$width, $height]);
 
@@ -66,7 +65,7 @@ class Deepzoom
         $folder = $foldername.'/'.$filename.'_files';
         $this->path->createDir($folder);
 
-        foreach(range(0,$numLevels - 1) as $level) {
+        foreach(range($numLevels - 1, 0) as $level) {
             $level_folder = $folder.'/'.$level;
             $this->path->createDir($level_folder);
             // calculate scale for level
@@ -74,7 +73,7 @@ class Deepzoom
             // calculate dimensions for levels
             $dimension = $this->getDimensionForLevel($width, $height, $scale);
             // create tiles for level
-            $this->createLevelTiles($dimension['width'], $dimension['height'], $level, $level_folder, $image);
+            $this->createLevelTiles($dimension['width'], $dimension['height'], $level, $level_folder, $img);
         }
 
         $DZI = $this->createDZI($height, $width);
@@ -144,14 +143,15 @@ class Deepzoom
      * @param $height
      * @param $level
      * @param $folder
-     * @param $image
+     * @param $img
      */
-    public function createLevelTiles($width, $height, $level, $folder, $image)
+    public function createLevelTiles($width, $height, $level, $folder, $img)
     {
         // create new image at scaled dimensions
-        $img = $this->imageManager->make($image)->resize($width, $height);
+        $img = $img->resize($width, $height);
         // get column and row count for level
         $tiles = $this->getNumTiles($width, $height);
+
         foreach (range(0, $tiles['columns'] - 1) as $column) {
             foreach (range(0, $tiles['rows'] - 1) as $row) {
                 $tileImg = clone $img;
@@ -163,7 +163,6 @@ class Deepzoom
                 unset($tileImg);
             }
         }
-        unset($img);
     }
 
     /**
