@@ -5,6 +5,10 @@ namespace Jeremytubbs\Deepzoom;
 use Intervention\Image\ImageManager;
 use League\Flysystem\FilesystemInterface;
 
+/**
+ * Class Deepzoom
+ * @package Jeremytubbs\Deepzoom
+ */
 class Deepzoom
 {
     protected $cache;
@@ -15,6 +19,10 @@ class Deepzoom
     private $tileOverlap;
     private $tileFormat;
 
+    /**
+     * @param FilesystemInterface $path
+     * @param ImageManager $imageManager
+     */
     public function __construct(FilesystemInterface $path, ImageManager $imageManager)
     {
         $this->setImageManager($imageManager);
@@ -24,6 +32,12 @@ class Deepzoom
         $this->tileFormat = 'jpg';
     }
 
+    /**
+     * @param $image
+     * @param null $file
+     * @param null $folder
+     * @return array|string
+     */
     public function makeTiles($image, $file = NULL, $folder = NULL)
     {
         // path to a test image
@@ -80,11 +94,20 @@ class Deepzoom
         ];
     }
 
+    /**
+     * @param $maxDimension
+     * @return int
+     */
     public function getNumLevels($maxDimension)
     {
         return (int)ceil(log($maxDimension,2)) + 1;
     }
 
+    /**
+     * @param $width
+     * @param $height
+     * @return array
+     */
     public function getNumTiles($width, $height)
     {
         $columns = (int)ceil(floatval($width) / $this->tileSize);
@@ -92,12 +115,23 @@ class Deepzoom
         return ['columns' => $columns, 'rows' => $rows];
     }
 
+    /**
+     * @param $numLevels
+     * @param $level
+     * @return number
+     */
     public function getScaleForLevel($numLevels, $level)
     {
         $maxLevel = $numLevels - 1;
         return pow(0.5,$maxLevel - $level);
     }
 
+    /**
+     * @param $width
+     * @param $height
+     * @param $scale
+     * @return array
+     */
     public function getDimensionForLevel($width, $height, $scale)
     {
         $width = (int)ceil($width * $scale);
@@ -105,6 +139,13 @@ class Deepzoom
         return ['width' => $width, 'height' => $height];
     }
 
+    /**
+     * @param $width
+     * @param $height
+     * @param $level
+     * @param $folder
+     * @param $image
+     */
     public function createLevelTiles($width, $height, $level, $folder, $image)
     {
         // create new image at scaled dimensions
@@ -125,6 +166,11 @@ class Deepzoom
         unset($img);
     }
 
+    /**
+     * @param $column
+     * @param $row
+     * @return array
+     */
     public function getTileBoundsPosition($column, $row)
     {
         $offsetX = $column == 0 ? 0 : $this->tileOverlap;
@@ -135,6 +181,14 @@ class Deepzoom
         return ['x' => $x, 'y' => $y];
     }
 
+    /**
+     * @param $level
+     * @param $column
+     * @param $row
+     * @param $w
+     * @param $h
+     * @return array
+     */
     public function getTileBounds($level, $column, $row, $w, $h)
     {
         $position = $this->getTileBoundsPosition($column, $row);
@@ -147,6 +201,11 @@ class Deepzoom
         return array_merge($position,['width' => $newWidth,'height' => $newHeight]);
     }
 
+    /**
+     * @param $height
+     * @param $width
+     * @return string
+     */
     public function createDZI($height, $width)
     {
         return <<<EOF
@@ -161,6 +220,12 @@ class Deepzoom
 EOF;
     }
 
+    /**
+     * @param $filename
+     * @param $height
+     * @param $width
+     * @return string
+     */
     public function createJSONP($filename, $height, $width)
     {
         return <<<EOF
@@ -179,6 +244,11 @@ $filename({
 EOF;
     }
 
+    /**
+     * @param $file
+     * @param $folder
+     * @return array|string
+     */
     public function checkFileFolderNames($file, $folder) {
         // check for space
         if (preg_match('/\s/',$file) || preg_match('/\s/',$folder)) {
@@ -207,21 +277,33 @@ EOF;
         return 'ok';
     }
 
+    /**
+     * @param ImageManager $imageManager
+     */
     public function setImageManager(ImageManager $imageManager)
     {
         $this->imageManager = $imageManager;
     }
 
+    /**
+     * @return mixed
+     */
     public function getImageManager()
     {
         return $this->imageManager;
     }
 
+    /**
+     * @param FilesystemInterface $path
+     */
     public function setPath(FilesystemInterface $path)
     {
         $this->path = $path;
     }
 
+    /**
+     * @return mixed
+     */
     public function getPath()
     {
         return $this->path;

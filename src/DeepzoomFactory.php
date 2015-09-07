@@ -6,15 +6,28 @@ use Intervention\Image\ImageManager;
 use League\Flysystem\Adapter\Local;
 use League\Flysystem\Filesystem;
 
+/**
+ * Class DeepzoomFactory
+ * @package Jeremytubbs\Deepzoom
+ */
 class DeepzoomFactory
 {
-	protected $config;
+    /**
+     * @var array
+     */
+    protected $config;
 
+    /**
+     * @param array $config
+     */
 	public function __construct(array $config = [])
     {
         $this->config = $config;
     }
 
+    /**
+     * @return Deepzoom
+     */
     public function getDeepzoom()
     {
     	$deepzoom = new Deepzoom(
@@ -25,6 +38,9 @@ class DeepzoomFactory
         return $deepzoom;
     }
 
+    /**
+     * @return Filesystem|void
+     */
     public function getPath()
     {
         if (!isset($this->config['path'])) {
@@ -40,6 +56,9 @@ class DeepzoomFactory
         return $this->config['Path'];
     }
 
+    /**
+     * @return ImageManager
+     */
     public function getImageManager()
     {
         $driver = 'gd';
@@ -53,6 +72,10 @@ class DeepzoomFactory
         ]);
     }
 
+    /**
+     * @param array $config
+     * @return Deepzoom
+     */
     public static function create(array $config = [])
     {
         return (new self($config))->getDeepzoom();
