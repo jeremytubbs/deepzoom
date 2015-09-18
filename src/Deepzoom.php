@@ -233,7 +233,7 @@ $filename({
         xmlns: 'http://schemas.microsoft.com/deepzoom/2008',
         Format: '$this->tileFormat',
         Overlap: $this->tileOverlap,
-        TileSize: $this->tileSize
+        TileSize: $this->tileSize,
         Size: {
             Width: $width,
             Height: $height
