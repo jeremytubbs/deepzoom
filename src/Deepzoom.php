@@ -54,12 +54,14 @@ class Deepzoom
 
         // set filename or use path filename
         $filename = $file !== NULL ? $file : pathinfo($image)['filename'];
+        $filename = $this->cleanupFilename($filename);
 
         // set folder or use path filename
         $foldername = $folder !== NULL ? $folder : pathinfo($image)['filename'];
+        $foldername = $this->cleanupFolderName($foldername);
 
         // check for spaces in names
-        $check = $this->checkFileFolderNames($filename, $folder);
+        $check = $this->checkJsonFilename($filename);
         if ($check != 'ok') return $check;
 
         $folder = $foldername.'/'.$filename.'_files';
@@ -244,33 +246,49 @@ EOF;
     }
 
     /**
-     * @param $file
-     * @param $folder
+     * @param $string
+     * @return string
+     */
+    public function cleanupFilename($string)
+    {
+        // trim space
+        $string = trim($string);
+        // replace strings and dashes with underscore
+        return str_replace(['/\s/', '-', ' '], '_', $string);
+    }
+
+    /**
+     * @param $string
+     * @return string
+     */
+    public function cleanupFolderName($string)
+    {
+        // trim space
+        $string = trim($string);
+        // replace strings and dashes with dash
+        return str_replace(['/\s/', ' '], '-', $string);
+    }
+
+    /**
+     * @param $string
      * @return array|string
      */
-    public function checkFileFolderNames($file, $folder) {
-        // check for space
-        if (preg_match('/\s/',$file) || preg_match('/\s/',$folder)) {
+    public function checkJsonFilename($string) {
+        // for JSONP filename cannot contain special characters
+        $specialCharRegex = '/[\'^£%&*()}{@#~?><> ,|=+¬-]/';
+        if (preg_match($specialCharRegex, $string)) {
             return [
                 'status' => 'error',
-                'message' => 'Filename and folder name must not contain spaces.'
-            ];
-        }
-        // check for special characters
-        $specialCharRegex = '/[\'^£$%&*()}{@#~?><>,|=_+¬-]/';
-        if (preg_match($specialCharRegex, $file) || preg_match($specialCharRegex, $folder)) {
-            return [
-                'status' => 'error',
-                'message' => 'Filename and folder name must not contain special characters.'
+                'message' => 'JSONP filename name must not contain special characters.'
             ];
         }
         // for JSONP filename cannot start with a number
-        $fileFirstChar = substr($file, 0, 1);
+        $stringFirstChar = substr($string, 0, 1);
         // if numeric add 'a' to begining of filename
-        if (is_numeric($fileFirstChar)) {
+        if (is_numeric($stringFirstChar)) {
             return [
                 'status' => 'error',
-                'message' => 'Filenames must not start with a numeric value.'
+                'message' => 'JSONP filenames must not start with a numeric value.'
             ];
         }
         return 'ok';
