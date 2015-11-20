@@ -23,6 +23,7 @@ class DeepzoomFactory
 	public function __construct(array $config = [])
     {
         $this->config = $config;
+        var_dump($config);
     }
 
     /**
@@ -32,7 +33,8 @@ class DeepzoomFactory
     {
     	$deepzoom = new Deepzoom(
             $this->getPath(),
-            $this->getImageManager()
+            $this->getImageManager(),
+            $this->getTileFormat()
         );
 
         return $deepzoom;
@@ -52,8 +54,6 @@ class DeepzoomFactory
                 new Local($this->config['path'])
             );
         }
-
-        return $this->config['Path'];
     }
 
     /**
@@ -70,6 +70,18 @@ class DeepzoomFactory
         return new ImageManager([
             'driver' => $driver,
         ]);
+    }
+
+    public function getTileFormat()
+    {
+        $tileFormat = 'jpg';
+
+        if (isset($this->config['format'])) {
+            $tileFormat = $this->config['format'];
+            var_dump($tileFormat);
+        }
+
+        return $tileFormat;
     }
 
     /**

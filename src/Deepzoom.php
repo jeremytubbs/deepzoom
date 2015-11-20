@@ -11,25 +11,25 @@ use League\Flysystem\FilesystemInterface;
  */
 class Deepzoom
 {
-    protected $cache;
-    protected $source;
+    protected $path;
     protected $imageManager;
+    protected $tileFormat;
 
     private $tileSize;
     private $tileOverlap;
-    private $tileFormat;
+
 
     /**
      * @param FilesystemInterface $path
      * @param ImageManager $imageManager
      */
-    public function __construct(FilesystemInterface $path, ImageManager $imageManager)
+    public function __construct(FilesystemInterface $path, ImageManager $imageManager, $tileFormat)
     {
         $this->setImageManager($imageManager);
         $this->setPath($path);
         $this->tileSize = 256;
         $this->tileOverlap = 1;
-        $this->tileFormat = 'jpg';
+        $this->tileFormat = $tileFormat;
     }
 
     /**

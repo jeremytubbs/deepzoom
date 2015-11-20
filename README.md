@@ -10,6 +10,7 @@ Example implementation -
   $deepzoom = Jeremytubbs\Deepzoom\DeepzoomFactory::create([
       'path' => 'images', // Export path for tiles
       'driver' => 'imagick', // Choose between gd and imagick support.
+      'format' => 'jpg',
   ]);
   // folder, file are optional and will default to filename
   $response = $deepzoom->makeTiles('KISS.jpg', 'file', 'folder');
