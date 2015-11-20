@@ -34,5 +34,5 @@ Example response -
 - Imagick PHP extension (>=6.5.7)
 
 ### FYI:
-Filenames must be non-numeric and should not contain underscores, hyphens or spaces.
+Filenames for JSONP must not start with a number and should not contain hyphen therefore filename spaces and hyphens will be converted to underscores. Folder name spaces will be converted to hyphens. If you would like to avoid this auto-naming declare your 'folder' and 'file' within the maketiles method. 
 
