@@ -23,7 +23,6 @@ class DeepzoomFactory
 	public function __construct(array $config = [])
     {
         $this->config = $config;
-        var_dump($config);
     }
 
     /**
