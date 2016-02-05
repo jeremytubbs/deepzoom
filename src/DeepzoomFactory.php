@@ -77,7 +77,6 @@ class DeepzoomFactory
 
         if (isset($this->config['format'])) {
             $tileFormat = $this->config['format'];
-            var_dump($tileFormat);
         }
 
         return $tileFormat;
