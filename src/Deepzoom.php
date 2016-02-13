@@ -84,6 +84,9 @@ class Deepzoom
         $JSONP = $this->createJSONP($filename, $height, $width);
         $this->path->put($foldername.'/'.$filename.'.js', $JSONP);
 
+        // used with Laravel to fire event
+        if ( defined('LARAVEL_START') ) \Event::fire('deepzoom', [$results]);
+
         return [
             'status' => 'ok',
             'data' => [
