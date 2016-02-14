@@ -57,7 +57,7 @@ class Deepzoom
         $filename = $this->cleanupFilename($filename);
 
         // set folder or use path filename
-        $foldername = $folder !== NULL ? $folder : pathinfo($image)['filename'];
+        $foldername = $folder !== NULL ? $folder : pathinfo($image)['dirname'];
         $foldername = $this->cleanupFolderName($foldername);
 
         // check for spaces in names
@@ -84,16 +84,22 @@ class Deepzoom
         $JSONP = $this->createJSONP($filename, $height, $width);
         $this->path->put($foldername.'/'.$filename.'.js', $JSONP);
 
+        $data = [
+            'output' => [
+                'JSONP' => "$foldername/$filename.js",
+                'DZI'   => "$foldername/$filename.dzi"
+            ],
+            'event'  => 'deepzoom',
+            'source' => $image,
+
+        ];
+
         // used with Laravel to fire event
-        if ( defined('LARAVEL_START') ) \Event::fire('deepzoom', [$results]);
+        if ( defined('LARAVEL_START') ) \Event::fire('deepzoom', [$data]);
 
         return [
             'status' => 'ok',
-            'data' => [
-                    'JSONP' => "$foldername/$filename.js",
-                    'DZI' => "$foldername/$filename.dzi",
-                    '_files' => "$foldername/$filename"."_files"
-                ],
+            'data' => $results,
             'message' => 'Everything is okay!'
         ];
     }
