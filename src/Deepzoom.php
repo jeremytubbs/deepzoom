@@ -99,7 +99,7 @@ class Deepzoom
 
         return [
             'status' => 'ok',
-            'data' => $results,
+            'data' => $data,
             'message' => 'Everything is okay!'
         ];
     }
