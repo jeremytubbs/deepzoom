@@ -57,7 +57,7 @@ class Deepzoom
         $filename = $this->cleanupFilename($filename);
 
         // set folder or use path filename
-        $foldername = $folder !== NULL ? $folder : pathinfo($image)['dirname'];
+        $foldername = $folder !== NULL ? $folder : pathinfo($image)['filename'];
         $foldername = $this->cleanupFolderName($foldername);
 
         // check for spaces in names
