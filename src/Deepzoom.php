@@ -17,19 +17,21 @@ class Deepzoom
 
     private $tileSize;
     private $tileOverlap;
+    private $pathPrefix;
 
 
     /**
      * @param FilesystemInterface $path
      * @param ImageManager $imageManager
      */
-    public function __construct(FilesystemInterface $path, ImageManager $imageManager, $tileFormat)
+    public function __construct(FilesystemInterface $path, ImageManager $imageManager, $tileFormat, $pathPrefix)
     {
         $this->setImageManager($imageManager);
         $this->setPath($path);
         $this->tileSize = 256;
         $this->tileOverlap = 1;
         $this->tileFormat = $tileFormat;
+        $this->pathPrefix = $pathPrefix;
     }
 
     /**
@@ -86,10 +88,9 @@ class Deepzoom
 
         $data = [
             'output' => [
-                'JSONP' => "$foldername/$filename.js",
-                'DZI'   => "$foldername/$filename.dzi"
+                'JSONP' => "$this->pathPrefix/$foldername/$filename.js",
+                'DZI'   => "$this->pathPrefix/$foldername/$filename.dzi"
             ],
-            'event'  => 'deepzoom',
             'source' => $image,
 
         ];
