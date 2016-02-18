@@ -88,11 +88,11 @@ class Deepzoom
 
         $data = [
             'output' => [
-                'JSONP' => "$this->pathPrefix/$foldername/$filename.js",
-                'DZI'   => "$this->pathPrefix/$foldername/$filename.dzi"
+                'JSONP'  => "$this->pathPrefix/$foldername/$filename.js",
+                'DZI'    => "$this->pathPrefix/$foldername/$filename.dzi",
+                '_files' => "$this->pathPrefix/$foldername/".$filename."_files",
             ],
             'source' => $image,
-
         ];
 
         // used with Laravel to fire event
