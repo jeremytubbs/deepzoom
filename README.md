@@ -21,9 +21,12 @@ Example response -
 {
   status: "ok",
   data: {
-    JSONP: "folder/file.js",
-    DZI: "folder/file.dzi",
-    _files: "folder/file_files"
+    output: {
+      JSONP: "folder/file.js",
+      DZI: "folder/file.dzi",
+      _files: "folder/file_files"
+    },
+    source: "source/file/path"
   },
   message: "Everything is okay!"
 }
