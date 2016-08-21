@@ -14,6 +14,7 @@ class Deepzoom
     protected $path;
     protected $imageManager;
     protected $tileFormat;
+    protected $jpgQuality;
 
     private $tileSize;
     private $tileOverlap;
@@ -24,7 +25,7 @@ class Deepzoom
      * @param FilesystemInterface $path
      * @param ImageManager $imageManager
      */
-    public function __construct(FilesystemInterface $path, ImageManager $imageManager, $tileFormat, $pathPrefix, $tileSize)
+    public function __construct(FilesystemInterface $path, ImageManager $imageManager, $tileFormat, $pathPrefix, $tileSize, $jpgQuality)
     {
         $this->setImageManager($imageManager);
         $this->setPath($path);
@@ -32,6 +33,7 @@ class Deepzoom
         $this->tileOverlap = 1;
         $this->tileFormat = $tileFormat;
         $this->pathPrefix = $pathPrefix;
+        $this->jpgQuality = $jpgQuality;
     }
 
     /**
@@ -175,7 +177,7 @@ class Deepzoom
                 $tile_file = $column.'_'.$row.'.'.$this->tileFormat;
                 $bounds = $this->getTileBounds($level,$column,$row,$width,$height);
                 $tileImg->crop($bounds['width'],$bounds['height'],$bounds['x'],$bounds['y']);
-                $tileImg->encode($this->tileFormat);
+                $tileImg->encode($this->tileFormat, $this->jpgQuality);
                 $this->path->put("$folder/$tile_file", $tileImg);
                 unset($tileImg);
             }

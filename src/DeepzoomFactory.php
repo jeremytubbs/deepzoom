@@ -36,7 +36,8 @@ class DeepzoomFactory
             $this->getImageManager(),
             $this->getTileFormat(),
             $this->getPathPrefix(),
-            $this->getTileSize()
+            $this->getTileSize(),
+            $this->getJpgQuality()
         );
 
         return $deepzoom;
@@ -96,6 +97,17 @@ class DeepzoomFactory
         }
 
         return $tileSize;
+    }
+
+    public function getJpgQuality()
+    {
+        $jpgQuality = 90;
+
+        if (isset($this->config['quality'])) {
+            $jpgQuality = $this->config['quality'];
+        }
+
+        return $jpgQuality;
     }
 
     public function getPathPrefix()
