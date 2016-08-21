@@ -44,6 +44,11 @@ class Deepzoom
     {
         // path to a test image
         $img = $this->imageManager->make($image);
+        if ($this->getImageManager() == "imagick") {
+          //optimize for web delivery
+          $img->getCore()->transformImageColorspace($img->getCore()::COLORSPACE_SRGB);
+          $img->getCore()->stripImage();
+        }
 
         // get image width and height
         $height = $img->height();
