@@ -35,7 +35,8 @@ class DeepzoomFactory
             $this->getFilesystem(),
             $this->getImageManager(),
             $this->getTileFormat(),
-            $this->getPathPrefix()
+            $this->getPathPrefix(),
+            $this->getTileSize()
         );
 
         return $deepzoom;
@@ -84,6 +85,17 @@ class DeepzoomFactory
         }
 
         return $tileFormat;
+    }
+
+    public function getTileSize()
+    {
+        $tileSize = 256;
+
+        if (isset($this->config['size'])) {
+            $tileSize = $this->config['size'];
+        }
+
+        return $tileSize;
     }
 
     public function getPathPrefix()

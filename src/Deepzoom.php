@@ -24,11 +24,11 @@ class Deepzoom
      * @param FilesystemInterface $path
      * @param ImageManager $imageManager
      */
-    public function __construct(FilesystemInterface $path, ImageManager $imageManager, $tileFormat, $pathPrefix)
+    public function __construct(FilesystemInterface $path, ImageManager $imageManager, $tileFormat, $pathPrefix, $tileSize)
     {
         $this->setImageManager($imageManager);
         $this->setPath($path);
-        $this->tileSize = 256;
+        $this->tileSize = $tileSize;
         $this->tileOverlap = 1;
         $this->tileFormat = $tileFormat;
         $this->pathPrefix = $pathPrefix;
