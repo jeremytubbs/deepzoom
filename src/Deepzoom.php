@@ -263,7 +263,7 @@ EOF;
     {
         // trim space
         $string = trim($string);
-        // replace strings and dashes with underscore
+        // replace strings, dashes and whitespaces with underscore
         return str_replace(['/\s/', '-', ' '], '_', $string);
     }
 
@@ -275,7 +275,7 @@ EOF;
     {
         // trim space
         $string = trim($string);
-        // replace strings and dashes with dash
+        // replace strings and whitespaces with dash
         return str_replace(['/\s/', ' '], '-', $string);
     }
 
