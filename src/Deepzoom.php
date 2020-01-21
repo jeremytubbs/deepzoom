@@ -96,7 +96,7 @@ class Deepzoom
         ];
 
         // used with Laravel to fire event
-        if ( defined('LARAVEL_START') ) \Event::fire('deepzoom', [$data]);
+        if ( defined('LARAVEL_START') ) \Event::dispatch('deepzoom', [$data]);
 
         return [
             'status' => 'ok',
