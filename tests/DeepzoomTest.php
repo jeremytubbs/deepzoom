@@ -3,24 +3,35 @@
 namespace Jeremytubbs\Deepzoom\Tests;
 
 use Jeremytubbs\Deepzoom\DeepzoomFactory;
+use League\Flysystem\Config;
+use League\Flysystem\Local\LocalFilesystemAdapter;
 use PHPUnit\Framework\TestCase;
 
 class DeepzoomTest extends TestCase
 {
     public const TEST_DIR = __DIR__ . '/test-data/';
 
-    private $tempDir;
+    private $adapter;
+
+    private $workingDirectory;
 
     public function setUp(): void
     {
-        $this->tempDir = sys_get_temp_dir() . '/jt-dz-' . (string)mt_rand();
-        mkdir($this->tempDir);
+        $this->workingDirectory = '/jt-dz' . (string)mt_rand();
+
+        $this->adapter = new LocalFilesystemAdapter(sys_get_temp_dir());
+        $this->adapter->createDirectory($this->workingDirectory, new Config());
+    }
+
+    public function tearDown(): void
+    {
+        $this->adapter->deleteDirectory($this->workingDirectory);
     }
 
     public function testGeneratesImage(): void
     {
         $dz = DeepzoomFactory::create([
-            'path' => $this->tempDir,
+            'path' => sys_get_temp_dir() . $this->workingDirectory,
             'driver' => 'imagick',
             'format' => 'jpeg',
         ]);
