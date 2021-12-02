@@ -3,7 +3,7 @@
 namespace Jeremytubbs\Deepzoom;
 
 use Intervention\Image\ImageManager;
-use League\Flysystem\FilesystemInterface;
+use League\Flysystem\FilesystemOperator;
 
 /**
  * Class Deepzoom
@@ -21,10 +21,10 @@ class Deepzoom
 
 
     /**
-     * @param FilesystemInterface $path
+     * @param FilesystemOperator $path
      * @param ImageManager $imageManager
      */
-    public function __construct(FilesystemInterface $path, ImageManager $imageManager, $tileFormat, $pathPrefix)
+    public function __construct(FilesystemOperator $path, ImageManager $imageManager, $tileFormat, $pathPrefix)
     {
         $this->setImageManager($imageManager);
         $this->setPath($path);
@@ -67,11 +67,11 @@ class Deepzoom
         if ($check != 'ok') return $check;
 
         $folder = $foldername.'/'.$filename.'_files';
-        $this->path->createDir($folder);
+        $this->path->createDirectory($folder);
 
         foreach(range($numLevels - 1, 0) as $level) {
             $level_folder = $folder.'/'.$level;
-            $this->path->createDir($level_folder);
+            $this->path->createDirectory($level_folder);
             // calculate scale for level
             $scale = $this->getScaleForLevel($numLevels, $level);
             // calculate dimensions for levels
@@ -81,10 +81,10 @@ class Deepzoom
         }
 
         $DZI = $this->createDZI($height, $width);
-        $this->path->put($foldername.'/'.$filename.'.dzi', $DZI);
+        $this->path->write($foldername.'/'.$filename.'.dzi', $DZI);
 
         $JSONP = $this->createJSONP($filename, $height, $width);
-        $this->path->put($foldername.'/'.$filename.'.js', $JSONP);
+        $this->path->write($foldername.'/'.$filename.'.js', $JSONP);
 
         $data = [
             'output' => [
@@ -171,7 +171,7 @@ class Deepzoom
                 $bounds = $this->getTileBounds($level,$column,$row,$width,$height);
                 $tileImg->crop($bounds['width'],$bounds['height'],$bounds['x'],$bounds['y']);
                 $tileImg->encode($this->tileFormat);
-                $this->path->put("$folder/$tile_file", $tileImg);
+                $this->path->write("$folder/$tile_file", $tileImg);
                 unset($tileImg);
             }
         }
@@ -323,7 +323,7 @@ EOF;
     /**
      * @param FilesystemInterface $path
      */
-    public function setPath(FilesystemInterface $path)
+    public function setPath(FilesystemOperator $path)
     {
         $this->path = $path;
     }
