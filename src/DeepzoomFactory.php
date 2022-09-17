@@ -55,8 +55,6 @@ class DeepzoomFactory
                 new LocalFilesystemAdapter($this->config['path'])
             );
         }
-
-        return $this->config['source'];
     }
 
     /**

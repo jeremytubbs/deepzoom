@@ -11,8 +11,6 @@ use League\Flysystem\FilesystemOperator;
  */
 class Deepzoom
 {
-    protected $path;
-    protected $imageManager;
     protected $tileFormat;
 
     private $tileSize;
@@ -78,7 +76,7 @@ class Deepzoom
             // calculate dimensions for levels
             $dimension = $this->getDimensionForLevel($width, $height, $scale);
             // create tiles for level
-            $this->createLevelTiles($dimension['width'], $dimension['height'], $level, $level_folder, $img);
+            $this->createLevelTiles($dimension['width'], $dimension['height'], $level_folder, $img);
         }
 
         $DZI = $this->createDZI($height, $width);
@@ -154,11 +152,10 @@ class Deepzoom
     /**
      * @param $width
      * @param $height
-     * @param $level
      * @param $folder
      * @param $img
      */
-    public function createLevelTiles($width, $height, $level, $folder, $img)
+    public function createLevelTiles($width, $height, $folder, $img)
     {
         // create new image at scaled dimensions
         $img = $img->resize($width, $height);
@@ -169,7 +166,7 @@ class Deepzoom
             foreach (range(0, $tiles['rows'] - 1) as $row) {
                 $tileImg = clone $img;
                 $tile_file = $column . '_' . $row . '.' . $this->tileFormat;
-                $bounds = $this->getTileBounds($level, $column, $row, $width, $height);
+                $bounds = $this->getTileBounds($column, $row, $width, $height);
                 $tileImg->crop($bounds['width'], $bounds['height'], $bounds['x'], $bounds['y']);
                 $tileImg->encode($this->tileFormat);
                 $this->path->write("$folder/$tile_file", $tileImg);
@@ -194,14 +191,13 @@ class Deepzoom
     }
 
     /**
-     * @param $level
      * @param $column
      * @param $row
      * @param $w
      * @param $h
      * @return array
      */
-    public function getTileBounds($level, $column, $row, $w, $h)
+    public function getTileBounds($column, $row, $w, $h)
     {
         $position = $this->getTileBoundsPosition($column, $row);
 
@@ -316,26 +312,10 @@ EOF;
     }
 
     /**
-     * @return mixed
-     */
-    public function getImageManager()
-    {
-        return $this->imageManager;
-    }
-
-    /**
      * @param FilesystemOperator $path
      */
     public function setPath(FilesystemOperator $path)
     {
         $this->path = $path;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getPath()
-    {
-        return $this->path;
     }
 }
