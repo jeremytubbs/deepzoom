@@ -19,10 +19,23 @@ afterEach(
     }
 );
 
-it('makes tiles', function () {
+it('makes tiles with gd', function () {
     $deepzoom = DeepzoomFactory::create([
         'path' => sys_get_temp_dir() . $this->directory,
         'driver' => 'gd',
+        'format' => 'jpeg',
+    ]);
+
+    $response = $deepzoom->makeTiles($this->testDataDir . 'image.png');
+
+    $this->assertEquals('ok', $response['status']);
+});
+
+
+it('makes tiles with imagick', function () {
+    $deepzoom = DeepzoomFactory::create([
+        'path' => sys_get_temp_dir() . $this->directory,
+        'driver' => 'imagick',
         'format' => 'jpeg',
     ]);
 
