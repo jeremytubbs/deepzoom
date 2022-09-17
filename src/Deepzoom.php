@@ -11,8 +11,6 @@ use League\Flysystem\FilesystemOperator;
  */
 class Deepzoom
 {
-    // protected $path;
-    // protected $imageManager;
     protected $tileFormat;
 
     private $tileSize;
