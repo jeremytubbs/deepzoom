@@ -3,7 +3,7 @@
 namespace Jeremytubbs\Deepzoom;
 
 use Intervention\Image\ImageManager;
-use League\Flysystem\FilesystemInterface;
+use League\Flysystem\FilesystemOperator;
 
 /**
  * Class Deepzoom
@@ -19,12 +19,11 @@ class Deepzoom
     private $tileOverlap;
     private $pathPrefix;
 
-
     /**
-     * @param FilesystemInterface $path
+     * @param FilesystemOperator $path
      * @param ImageManager $imageManager
      */
-    public function __construct(FilesystemInterface $path, ImageManager $imageManager, $tileFormat, $pathPrefix)
+    public function __construct(FilesystemOperator $path, ImageManager $imageManager, $tileFormat, $pathPrefix)
     {
         $this->setImageManager($imageManager);
         $this->setPath($path);
@@ -40,7 +39,7 @@ class Deepzoom
      * @param null $folder
      * @return array|string
      */
-    public function makeTiles($image, $file = NULL, $folder = NULL)
+    public function makeTiles($image, $file = null, $folder = null)
     {
         // path to a test image
         $img = $this->imageManager->make($image);
@@ -55,23 +54,25 @@ class Deepzoom
         $numLevels = $this->getNumLevels($maxDimension);
 
         // set filename or use path filename
-        $filename = $file !== NULL ? $file : pathinfo($image)['filename'];
+        $filename = $file !== null ? $file : pathinfo($image)['filename'];
         $filename = $this->cleanupFilename($filename);
 
         // set folder or use path filename
-        $foldername = $folder !== NULL ? $folder : pathinfo($image)['filename'];
+        $foldername = $folder !== null ? $folder : pathinfo($image)['filename'];
         $foldername = $this->cleanupFolderName($foldername);
 
         // check for spaces in names
         $check = $this->checkJsonFilename($filename);
-        if ($check != 'ok') return $check;
+        if ($check != 'ok') {
+            return $check;
+        }
 
-        $folder = $foldername.'/'.$filename.'_files';
-        $this->path->createDir($folder);
+        $folder = $foldername . '/' . $filename . '_files';
+        $this->path->createDirectory($folder);
 
-        foreach(range($numLevels - 1, 0) as $level) {
-            $level_folder = $folder.'/'.$level;
-            $this->path->createDir($level_folder);
+        foreach (range($numLevels - 1, 0) as $level) {
+            $level_folder = $folder . '/' . $level;
+            $this->path->createDirectory($level_folder);
             // calculate scale for level
             $scale = $this->getScaleForLevel($numLevels, $level);
             // calculate dimensions for levels
@@ -81,27 +82,24 @@ class Deepzoom
         }
 
         $DZI = $this->createDZI($height, $width);
-        $this->path->put($foldername.'/'.$filename.'.dzi', $DZI);
+        $this->path->write($foldername . '/' . $filename . '.dzi', $DZI);
 
         $JSONP = $this->createJSONP($filename, $height, $width);
-        $this->path->put($foldername.'/'.$filename.'.js', $JSONP);
+        $this->path->write($foldername . '/' . $filename . '.js', $JSONP);
 
         $data = [
             'output' => [
-                'JSONP'  => "$this->pathPrefix/$foldername/$filename.js",
-                'DZI'    => "$this->pathPrefix/$foldername/$filename.dzi",
-                '_files' => "$this->pathPrefix/$foldername/".$filename."_files",
+                'JSONP' => "$this->pathPrefix/$foldername/$filename.js",
+                'DZI' => "$this->pathPrefix/$foldername/$filename.dzi",
+                '_files' => "$this->pathPrefix/$foldername/" . $filename . "_files",
             ],
             'source' => $image,
         ];
 
-        // used with Laravel to fire event
-        if ( defined('LARAVEL_START') ) \Event::dispatch('deepzoom', [$data]);
-
         return [
             'status' => 'ok',
             'data' => $data,
-            'message' => 'Everything is okay!'
+            'message' => 'Everything is okay!',
         ];
     }
 
@@ -111,7 +109,7 @@ class Deepzoom
      */
     public function getNumLevels($maxDimension)
     {
-        return (int)ceil(log($maxDimension,2)) + 1;
+        return (int)ceil(log($maxDimension, 2)) + 1;
     }
 
     /**
@@ -123,6 +121,7 @@ class Deepzoom
     {
         $columns = (int)ceil(floatval($width) / $this->tileSize);
         $rows = (int)ceil(floatval($height) / $this->tileSize);
+
         return ['columns' => $columns, 'rows' => $rows];
     }
 
@@ -134,7 +133,8 @@ class Deepzoom
     public function getScaleForLevel($numLevels, $level)
     {
         $maxLevel = $numLevels - 1;
-        return pow(0.5,$maxLevel - $level);
+
+        return pow(0.5, $maxLevel - $level);
     }
 
     /**
@@ -147,6 +147,7 @@ class Deepzoom
     {
         $width = (int)ceil($width * $scale);
         $height = (int)ceil($height * $scale);
+
         return ['width' => $width, 'height' => $height];
     }
 
@@ -167,11 +168,11 @@ class Deepzoom
         foreach (range(0, $tiles['columns'] - 1) as $column) {
             foreach (range(0, $tiles['rows'] - 1) as $row) {
                 $tileImg = clone $img;
-                $tile_file = $column.'_'.$row.'.'.$this->tileFormat;
-                $bounds = $this->getTileBounds($level,$column,$row,$width,$height);
-                $tileImg->crop($bounds['width'],$bounds['height'],$bounds['x'],$bounds['y']);
+                $tile_file = $column . '_' . $row . '.' . $this->tileFormat;
+                $bounds = $this->getTileBounds($level, $column, $row, $width, $height);
+                $tileImg->crop($bounds['width'], $bounds['height'], $bounds['x'], $bounds['y']);
                 $tileImg->encode($this->tileFormat);
-                $this->path->put("$folder/$tile_file", $tileImg);
+                $this->path->write("$folder/$tile_file", $tileImg);
                 unset($tileImg);
             }
         }
@@ -209,7 +210,7 @@ class Deepzoom
         $newWidth = min($width, $w - $position['x']);
         $newHeight = min($height, $h - $position['y']);
 
-        return array_merge($position,['width' => $newWidth,'height' => $newHeight]);
+        return array_merge($position, ['width' => $newWidth, 'height' => $newHeight]);
     }
 
     /**
@@ -283,13 +284,14 @@ EOF;
      * @param $string
      * @return array|string
      */
-    public function checkJsonFilename($string) {
+    public function checkJsonFilename($string)
+    {
         // for JSONP filename cannot contain special characters
         $specialCharRegex = '/[\'^£%&*()}{@#~?><> ,|=+¬-]/';
         if (preg_match($specialCharRegex, $string)) {
             return [
                 'status' => 'error',
-                'message' => 'JSONP filename name must not contain special characters.'
+                'message' => 'JSONP filename name must not contain special characters.',
             ];
         }
         // for JSONP filename cannot start with a number
@@ -298,9 +300,10 @@ EOF;
         if (is_numeric($stringFirstChar)) {
             return [
                 'status' => 'error',
-                'message' => 'JSONP filenames must not start with a numeric value.'
+                'message' => 'JSONP filenames must not start with a numeric value.',
             ];
         }
+
         return 'ok';
     }
 
@@ -321,9 +324,9 @@ EOF;
     }
 
     /**
-     * @param FilesystemInterface $path
+     * @param FilesystemOperator $path
      */
-    public function setPath(FilesystemInterface $path)
+    public function setPath(FilesystemOperator $path)
     {
         $this->path = $path;
     }

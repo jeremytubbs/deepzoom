@@ -1,10 +1,17 @@
-Deepzoom
-==
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/jeremytubbs/deepzoom.svg?style=flat-square)](https://packagist.org/packages/jeremytubbs/deepzoom)
+[![Tests](https://github.com/jeremytubbs/deepzoom/actions/workflows/run-tests.yml/badge.svg?branch=main)](https://github.com/jeremytubbs/deepzoom/actions/workflows/run-tests.yml)
+[![Total Downloads](https://img.shields.io/packagist/dt/jeremytubbs/deepzoom.svg?style=flat-square)](https://packagist.org/packages/jeremytubbs/deepzoom)
+
+---
+
+# Deepzoom
+
 Tile Generator for use with OpenSeadragon.
 
 https://openseadragon.github.io/
 
 Example implementation -
+
 ```php
   // Setup Deepzoom
   $deepzoom = Jeremytubbs\Deepzoom\DeepzoomFactory::create([
@@ -17,6 +24,7 @@ Example implementation -
 ```
 
 Example response -
+
 ```javascript
 {
   status: "ok",
@@ -33,9 +41,10 @@ Example response -
 ```
 
 ### Supported Image Libraries
-- GD Library (>=2.0)
-- Imagick PHP extension (>=6.5.7)
+
+-   GD Library (>=2.0)
+-   Imagick PHP extension (>=6.5.7)
 
 ### FYI:
-Filenames for JSONP must not start with a number and should not contain hyphen therefore filename spaces and hyphens will be converted to underscores. Folder name spaces will be converted to hyphens. If you would like to avoid this auto-naming declare your 'folder' and 'file' within the maketiles method. 
 
+Filenames for JSONP must not start with a number and should not contain hyphen therefore filename spaces and hyphens will be converted to underscores. Folder name spaces will be converted to hyphens. If you would like to avoid this auto-naming declare your 'folder' and 'file' within the maketiles method.
