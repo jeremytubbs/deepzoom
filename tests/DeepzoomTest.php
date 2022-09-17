@@ -4,7 +4,6 @@ use Jeremytubbs\Deepzoom\DeepzoomFactory;
 use League\Flysystem\Config;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 
-
 beforeEach(
     closure: function () {
         $this->testDataDir = __DIR__ . '/data/';
