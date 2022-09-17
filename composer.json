@@ -28,6 +28,11 @@
             "Jeremytubbs\\Deepzoom\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Jeremytubbs\\Deepzoom\\Tests\\": "tests"
+        }
+    },
     "require": {
         "php": "^8.0.2",
         "intervention/image": "^2.7.2",
@@ -36,18 +41,18 @@
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^3.0",
         "larapack/dd": "^1.1",
-        "phpunit/phpunit": "^9.5"
+        "pestphp/pest": "^1.20"
     },
     "scripts": {
-        "test": "vendor/bin/phpunit",
-        "test-coverage": [
-            "@putenv XDEBUG_MODE=coverage",
-            "vendor/bin/phpunit --coverage-html coverage"
-        ],
+        "test": "vendor/bin/pest",
+        "test-coverage": "vendor/bin/pest --coverage",
         "format": "vendor/bin/php-cs-fixer fix --allow-risky=yes"
     },
     "config": {
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
     },
     "minimum-stability": "dev",
     "prefer-stable": true
