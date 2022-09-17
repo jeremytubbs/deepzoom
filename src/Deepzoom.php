@@ -19,7 +19,6 @@ class Deepzoom
     private $tileOverlap;
     private $pathPrefix;
 
-
     /**
      * @param FilesystemOperator $path
      * @param ImageManager $imageManager
@@ -40,7 +39,7 @@ class Deepzoom
      * @param null $folder
      * @return array|string
      */
-    public function makeTiles($image, $file = NULL, $folder = NULL)
+    public function makeTiles($image, $file = null, $folder = null)
     {
         // path to a test image
         $img = $this->imageManager->make($image);
@@ -55,16 +54,18 @@ class Deepzoom
         $numLevels = $this->getNumLevels($maxDimension);
 
         // set filename or use path filename
-        $filename = $file !== NULL ? $file : pathinfo($image)['filename'];
+        $filename = $file !== null ? $file : pathinfo($image)['filename'];
         $filename = $this->cleanupFilename($filename);
 
         // set folder or use path filename
-        $foldername = $folder !== NULL ? $folder : pathinfo($image)['filename'];
+        $foldername = $folder !== null ? $folder : pathinfo($image)['filename'];
         $foldername = $this->cleanupFolderName($foldername);
 
         // check for spaces in names
         $check = $this->checkJsonFilename($filename);
-        if ($check != 'ok') return $check;
+        if ($check != 'ok') {
+            return $check;
+        }
 
         $folder = $foldername . '/' . $filename . '_files';
         $this->path->createDirectory($folder);
@@ -88,8 +89,8 @@ class Deepzoom
 
         $data = [
             'output' => [
-                'JSONP'  => "$this->pathPrefix/$foldername/$filename.js",
-                'DZI'    => "$this->pathPrefix/$foldername/$filename.dzi",
+                'JSONP' => "$this->pathPrefix/$foldername/$filename.js",
+                'DZI' => "$this->pathPrefix/$foldername/$filename.dzi",
                 '_files' => "$this->pathPrefix/$foldername/" . $filename . "_files",
             ],
             'source' => $image,
@@ -98,7 +99,7 @@ class Deepzoom
         return [
             'status' => 'ok',
             'data' => $data,
-            'message' => 'Everything is okay!'
+            'message' => 'Everything is okay!',
         ];
     }
 
@@ -120,6 +121,7 @@ class Deepzoom
     {
         $columns = (int)ceil(floatval($width) / $this->tileSize);
         $rows = (int)ceil(floatval($height) / $this->tileSize);
+
         return ['columns' => $columns, 'rows' => $rows];
     }
 
@@ -131,6 +133,7 @@ class Deepzoom
     public function getScaleForLevel($numLevels, $level)
     {
         $maxLevel = $numLevels - 1;
+
         return pow(0.5, $maxLevel - $level);
     }
 
@@ -144,6 +147,7 @@ class Deepzoom
     {
         $width = (int)ceil($width * $scale);
         $height = (int)ceil($height * $scale);
+
         return ['width' => $width, 'height' => $height];
     }
 
@@ -287,7 +291,7 @@ EOF;
         if (preg_match($specialCharRegex, $string)) {
             return [
                 'status' => 'error',
-                'message' => 'JSONP filename name must not contain special characters.'
+                'message' => 'JSONP filename name must not contain special characters.',
             ];
         }
         // for JSONP filename cannot start with a number
@@ -296,9 +300,10 @@ EOF;
         if (is_numeric($stringFirstChar)) {
             return [
                 'status' => 'error',
-                'message' => 'JSONP filenames must not start with a numeric value.'
+                'message' => 'JSONP filenames must not start with a numeric value.',
             ];
         }
+
         return 'ok';
     }
 

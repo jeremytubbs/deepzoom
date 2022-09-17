@@ -2,10 +2,10 @@
 
 namespace Jeremytubbs\Deepzoom;
 
-use InvalidArgumentException;
 use Intervention\Image\ImageManager;
-use League\Flysystem\Local\LocalFilesystemAdapter;
+use InvalidArgumentException;
 use League\Flysystem\Filesystem;
+use League\Flysystem\Local\LocalFilesystemAdapter;
 
 /**
  * Class DeepzoomFactory
@@ -46,7 +46,7 @@ class DeepzoomFactory
      */
     public function getFilesystem()
     {
-        if (!isset($this->config['path'])) {
+        if (! isset($this->config['path'])) {
             throw new InvalidArgumentException('A "source" file system must be set.');
         }
 
