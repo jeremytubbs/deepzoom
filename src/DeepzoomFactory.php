@@ -46,7 +46,7 @@ class DeepzoomFactory
      */
     public function getFilesystem()
     {
-        if (!isset($this->config['path'])) {
+        if (! isset($this->config['path'])) {
             throw new InvalidArgumentException('A "source" file system must be set.');
         }
 
