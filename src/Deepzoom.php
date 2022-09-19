@@ -3,7 +3,7 @@
 namespace Jeremytubbs\Deepzoom;
 
 use Intervention\Image\ImageManager;
-use League\Flysystem\FilesystemOperator;
+use League\Flysystem\Filesystem;
 
 /**
  * Class Deepzoom
@@ -20,12 +20,12 @@ class Deepzoom
     private $pathPrefix;
 
     /**
-     * @param FilesystemOperator $path
+     * @param Filesystem $path
      * @param ImageManager $imageManager
      * @param string $tileFormat
      * @param string $pathPrefix
      */
-    public function __construct(FilesystemOperator $path, ImageManager $imageManager, $tileFormat, $pathPrefix)
+    public function __construct(Filesystem $path, ImageManager $imageManager, $tileFormat, $pathPrefix)
     {
         $this->path = $path;
         $this->imageManager = $imageManager;
