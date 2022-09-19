@@ -11,22 +11,24 @@ use League\Flysystem\FilesystemOperator;
  */
 class Deepzoom
 {
+    protected $path;
+    protected $imageManager;
     protected $tileFormat;
 
-    private $tileSize;
-    private $tileOverlap;
+    private $tileSize = 256;
+    private $tileOverlap = 1;
     private $pathPrefix;
 
     /**
      * @param FilesystemOperator $path
      * @param ImageManager $imageManager
+     * @param string $tileFormat
+     * @param string $pathPrefix
      */
     public function __construct(FilesystemOperator $path, ImageManager $imageManager, $tileFormat, $pathPrefix)
     {
-        $this->setImageManager($imageManager);
-        $this->setPath($path);
-        $this->tileSize = 256;
-        $this->tileOverlap = 1;
+        $this->path = $path;
+        $this->imageManager = $imageManager;
         $this->tileFormat = $tileFormat;
         $this->pathPrefix = $pathPrefix;
     }
@@ -301,21 +303,5 @@ EOF;
         }
 
         return 'ok';
-    }
-
-    /**
-     * @param ImageManager $imageManager
-     */
-    public function setImageManager(ImageManager $imageManager)
-    {
-        $this->imageManager = $imageManager;
-    }
-
-    /**
-     * @param FilesystemOperator $path
-     */
-    public function setPath(FilesystemOperator $path)
-    {
-        $this->path = $path;
     }
 }

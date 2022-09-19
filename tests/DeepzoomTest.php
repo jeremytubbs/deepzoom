@@ -1,6 +1,7 @@
 <?php
 
 use Jeremytubbs\Deepzoom\DeepzoomFactory;
+use Jeremytubbs\Deepzoom\Exceptions\InvalidImageDriver;
 use League\Flysystem\Config;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 
@@ -75,3 +76,11 @@ it('throws exception when no path', function () {
         'format' => 'jpeg',
     ]);
 })->throws(InvalidArgumentException::class);
+
+it('throws exception with invalid driver', function () {
+    $deepzoom = DeepzoomFactory::create([
+        'path' => sys_get_temp_dir() . $this->directory,
+        'driver' => 'vips',
+        'format' => 'jpg',
+    ]);
+})->throws(InvalidImageDriver::class);
