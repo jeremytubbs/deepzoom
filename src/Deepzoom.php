@@ -16,6 +16,8 @@ class Deepzoom
     private $tileSize;
     private $tileOverlap;
     private $pathPrefix;
+    private $imageManager;
+    private $path;
 
     /**
      * @param FilesystemOperator $path
